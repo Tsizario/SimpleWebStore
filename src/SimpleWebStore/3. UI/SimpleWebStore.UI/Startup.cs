@@ -1,3 +1,4 @@
+using AspNetCoreHero.ToastNotification;
 using SimpleWebStore.DAL.Extensions;
 
 namespace BookWebStore.UI
@@ -16,13 +17,13 @@ namespace BookWebStore.UI
             services.AddDalServices(_configuration);
             // services.AddBllServices(_configuration);
 
-            //services.AddNotyf(config =>
-            //{
-            //    config.DurationInSeconds = 3;
-            //    config.IsDismissable = true;
-            //    config.Position = NotyfPosition.BottomRight;
-            //    config.HasRippleEffect = true;
-            //});
+            services.AddNotyf(config =>
+            {
+                config.DurationInSeconds = 3;
+                config.IsDismissable = true;
+                config.Position = NotyfPosition.BottomRight;
+                config.HasRippleEffect = true;
+            });
 
             services.AddMvc();
         }
