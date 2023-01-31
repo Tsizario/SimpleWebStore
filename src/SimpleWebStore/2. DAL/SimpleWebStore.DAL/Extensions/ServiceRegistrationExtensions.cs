@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SimpleWebStore.DAL.UnitOfWork;
 
 namespace SimpleWebStore.DAL.Extensions
 {
@@ -14,6 +15,8 @@ namespace SimpleWebStore.DAL.Extensions
                 config.UseSqlServer(
                     configuration.GetConnectionString("SimpleWebStoreConnectionString"));
             });
+
+            services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
             return services;
         }
