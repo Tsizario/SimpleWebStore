@@ -8,11 +8,11 @@ using SimpleWebStore.UI.Areas.Abstractions;
 namespace SimpleWebStore.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CategoryController : GeneralController
+    public class CoverTypeController : GeneralController
     {
-        public CategoryController(IUnitOfWork unitOfWork,
+        public CoverTypeController(IUnitOfWork unitOfWork,
             ILogger<CategoryController> logger,
-            INotyfService toastNotification) 
+            INotyfService toastNotification)
                 : base(unitOfWork, logger, toastNotification)
         {
         }
@@ -21,14 +21,14 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [HttpGet]
         public async Task<ActionResult> Index()
         {
-            var allCategories = await _unitOfWork.CategoryRepository.GetAllEntitiesAsync();
+            var allCoverTypes = await _unitOfWork.CoverTypeRepository.GetAllEntitiesAsync();
 
-            if (allCategories == null)
+            if (allCoverTypes == null)
             {
                 _toastNotification.Error(Errors.CategorySameNumber);
             }
 
-            return View(allCategories);
+            return View(allCoverTypes);
         }
 
         [HttpGet]
@@ -41,21 +41,14 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [HttpPost]
         [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Category category)
+        public async Task<ActionResult> Create(CoverType coverType)
         {
             if (!ModelState.IsValid)
             {
-                return View(category);
+                return View(coverType);
             }
 
-            if (category.Name == category.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("Name", Errors.CategorySameNumber);
-
-                return View(category);
-            }
-
-            var addedItem = await _unitOfWork.CategoryRepository.AddEntityAsync(category);
+            var addedItem = await _unitOfWork.CoverTypeRepository.AddEntityAsync(coverType);
 
             if (addedItem == null)
             {
@@ -66,7 +59,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             await _unitOfWork.SaveAsync();
 
-            _toastNotification.Success(Notifications.CategoryCreateSuccess);
+            _toastNotification.Success(Notifications.CoverTypeCreateSuccess);
 
             return RedirectToAction(nameof(Index));
         }
@@ -79,7 +72,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
+            var category = await _unitOfWork.CoverTypeRepository.GetEntityAsync(c => c.Id == id);
 
             if (category == null)
             {
@@ -93,33 +86,25 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [HttpPost]
         [ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Category category)
+        public async Task<ActionResult> Edit(CoverType coverType)
         {
             if (!ModelState.IsValid)
             {
-                return View(category);
+                return View(coverType);
             }
 
-            if (category.Name == category.DisplayOrder.ToString())
-            {
-                // set the same name as on view/page (for example, 'Name' property of model as here)
-                ModelState.AddModelError("Name", Errors.CategorySameNumber);
-
-                return View(category);
-            }
-
-            var updatedItem = await _unitOfWork.CategoryRepository.UpdateEntityAsync(category);
+            var updatedItem = await _unitOfWork.CoverTypeRepository.UpdateEntityAsync(coverType);
 
             if (updatedItem == null)
             {
-                _toastNotification.Error(Errors.CategoryDoesNotExist);
+                _toastNotification.Error(Errors.CoverTypeDoesNotExist);
 
                 return RedirectToAction(nameof(Edit), updatedItem);
             }
 
             await _unitOfWork.SaveAsync();
 
-            _toastNotification.Success(Notifications.CategoryUpdateSuccess);
+            _toastNotification.Success(Notifications.CoverTypeCreateSuccess);
 
             return RedirectToAction(nameof(Index));
         }
@@ -132,7 +117,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
+            var category = await _unitOfWork.CoverTypeRepository.GetEntityAsync(c => c.Id == id);
 
             if (category == null)
             {
@@ -148,18 +133,18 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var deletedItem = await _unitOfWork.CategoryRepository.RemoveEntityAsync(id);
+            var deletedItem = await _unitOfWork.CoverTypeRepository.RemoveEntityAsync(id);
 
             if (deletedItem == null)
             {
-                _toastNotification.Error(Errors.CategoryDoesNotExist);
+                _toastNotification.Error(Errors.CoverTypeDoesNotExist);
 
                 return View(nameof(Index));
             }
 
             await _unitOfWork.SaveAsync();
 
-            _toastNotification.Success(Notifications.CategoryDeleteSuccess);
+            _toastNotification.Success(Notifications.CoverTypeDeleteSuccess);
 
             return RedirectToAction(nameof(Index));
         }
