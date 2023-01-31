@@ -1,5 +1,6 @@
 ﻿using SimpleWebStore.DAL.Repositories.CategoryRepository;
 using SimpleWebStore.DAL.Repositories.CoverTypeRepository;
+using SimpleWebStore.DAL.Repositories.ProductRepository;
 
 namespace SimpleWebStore.DAL.UnitOfWork
 {
@@ -7,6 +8,7 @@ namespace SimpleWebStore.DAL.UnitOfWork
     {
         ICategoryRepository CategoryRepository { get; }
         ICoverTypeRepository CoverTypeRepository { get; }
+        IProductRepository ProductRepository { get; }
 
         Task<bool> SaveAsync();
     }
