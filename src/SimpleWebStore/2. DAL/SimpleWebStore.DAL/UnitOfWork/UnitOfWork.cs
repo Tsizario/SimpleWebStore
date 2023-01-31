@@ -1,4 +1,5 @@
 ﻿using SimpleWebStore.DAL.Repositories.CategoryRepository;
+using SimpleWebStore.DAL.Repositories.CoverTypeRepository;
 
 namespace SimpleWebStore.DAL.UnitOfWork
 {
@@ -10,9 +11,12 @@ namespace SimpleWebStore.DAL.UnitOfWork
         {
             _dbContext = dbContext;
             CategoryRepository = new CategoryRepository(_dbContext);
+            CoverTypeRepository = new CoverTypeRepository(_dbContext);
         }
 
         public ICategoryRepository CategoryRepository { get; private set; }
+
+        public ICoverTypeRepository CoverTypeRepository { get; private set; }
 
         public async Task<bool> SaveAsync()
         {

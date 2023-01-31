@@ -12,6 +12,8 @@ namespace SimpleWebStore.DAL
 
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<CoverType> CoverTypes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
         }
