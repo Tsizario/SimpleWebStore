@@ -1,4 +1,14 @@
 ﻿var dataTable;
+var notyf = new Notyf(
+    {
+        position: {
+            x: 'right',
+            y: 'bottom',
+        },
+        duration: 3000,
+        dismissible: true,
+        ripple: true
+    });
 
 $(document).ready(function () {
     loadDataTable();
@@ -58,10 +68,10 @@ function Delete(url) {
                 success: function (data) {
                     if (data.success) {
                         dataTable.ajax.reload();
-                        toastr.success(data.message);
+                        notyf.success(data.message);
                     }
                     else {
-                        toastr.error(data.message);
+                        notyf.error(data.message);
                     }
                 }
             })

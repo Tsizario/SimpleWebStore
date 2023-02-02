@@ -7,7 +7,7 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/css/site.min.css" asp-append-version="true" rel="stylesheet" />
     <link href="~/lib/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
-    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
     <link href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Head", false)
 </head>
@@ -50,7 +50,6 @@
     </header>
     <section class="container">
         <main role="main" class="pb-3">
-            <partial name="_Notification" />
             @RenderBody()
         </main>
     </section>
@@ -65,7 +64,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @await Component.InvokeAsync("Notyf")
 </body>

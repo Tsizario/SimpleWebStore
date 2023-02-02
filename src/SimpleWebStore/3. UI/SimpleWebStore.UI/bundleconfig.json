@@ -4,5 +4,11 @@
     "inputFiles": [
       "wwwroot/css/site.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/product.min.js",
+    "inputFiles": [
+      "wwwroot/js/product.js"
+    ]
   }
 ]
