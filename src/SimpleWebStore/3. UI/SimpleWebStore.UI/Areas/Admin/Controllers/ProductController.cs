@@ -86,33 +86,14 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             if (file != null)
             {
-                string fileName = Guid.NewGuid().ToString();
+                var url = viewModel.Product.ImageUrl;
 
-                var upload = Path.Combine(wwwRootPath, @"images\products");
-                var extension = Path.GetExtension(file.FileName);
-
-                if (viewModel.Product.ImageUrl != null)
+                if (url != null)
                 {
-                    var oldImage = Path.Combine(wwwRootPath, viewModel.Product.ImageUrl.TrimStart('\\'));
-
-                    if (System.IO.File.Exists(oldImage))
-                    {
-                        System.IO.File.Delete(oldImage);
-                    }
+                    await DeletePhoto(url, _webHostEnvironment);
                 }
 
-                using (var fileStream = new FileStream(
-                    Path.Combine(upload, fileName + extension),
-                    FileMode.Append,
-                    FileAccess.Write,
-                    FileShare.None,
-                    bufferSize: 4096,
-                    useAsync: true))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
-
-                viewModel.Product.ImageUrl = @"\images\products\" + fileName + extension;
+                viewModel.Product.ImageUrl = await UploadPhoto(url, file, _webHostEnvironment);
             }
 
             string notification = null;
@@ -137,47 +118,27 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet]
-        public async Task<ActionResult> Delete(Guid? id)
+        [HttpDelete]
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null || id == Guid.Empty)
-            {
-                return NotFound();
-            }
-
-            var category = await _unitOfWork.ProductRepository.GetEntityAsync(c => c.Id == id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return View(category);
-        }
-
-        // DELETE
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(Guid id)
-        {
-            var deletedItem = await _unitOfWork.ProductRepository.RemoveEntityAsync(id);
+            var deletedItem = await _unitOfWork.ProductRepository.GetEntityAsync(c => c.Id == id);
 
             if (deletedItem == null)
             {
-                _toastNotification.Error(Errors.CoverTypeDoesNotExist);
-
-                return View(nameof(Index));
+                return Json(new { success = false, message = Errors.ProductDeletingError });
             }
+
+            await DeletePhoto(deletedItem.ImageUrl, _webHostEnvironment);
+
+            await _unitOfWork.ProductRepository.RemoveEntityAsync(id);
 
             await _unitOfWork.SaveAsync();
 
-            _toastNotification.Success(Notifications.CoverTypeDeleteSuccess);
-
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = true, message = Notifications.ProductDeleteSuccess });
         }
 
         #region API Calls
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -186,6 +147,48 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             return Json(new { data = productList });
         }
+
+        #endregion
+
+        #region Private methods
+
+        private async Task<string> UploadPhoto(string url, IFormFile? file, IWebHostEnvironment environment)
+        {
+            string fileName = Guid.NewGuid().ToString();
+
+            var upload = Path.Combine(environment.WebRootPath, @"images\products");
+            var extension = Path.GetExtension(file.FileName);
+
+            using (var fileStream = new FileStream(
+                Path.Combine(upload, fileName + extension),
+                FileMode.Append,
+                FileAccess.Write,
+                FileShare.None,
+                bufferSize: 4096,
+                useAsync: true))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            url = @"\images\products\" + fileName + extension;
+
+            return url;
+        }
+
+        private async Task<bool> DeletePhoto(string url, IWebHostEnvironment environment)
+        {
+            var oldImage = Path.Combine(environment.WebRootPath, url.TrimStart('\\'));
+
+            if (!System.IO.File.Exists(oldImage))
+            {
+                return false;
+            }
+
+            System.IO.File.Delete(oldImage);
+
+            return true;
+        }
+
         #endregion
     }
 }

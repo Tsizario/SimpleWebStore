@@ -7,6 +7,8 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="~/css/site.min.css" asp-append-version="true" rel="stylesheet" />
     <link href="~/lib/fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet" />
     @await RenderSectionAsync("Head", false)
 </head>
 <body>
@@ -15,7 +17,7 @@
             <div class="container">
                 <a class="navbar-brand fs-3" >
                     <i class=""></i>
-                    WebStore
+                    SimpleWebStore
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -34,32 +36,36 @@
                                 <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
                                 <a class="dropdown-item" asp-area="Admin" asp-controller="CoverType" asp-action="Index">Cover Type</a>
                                 <a class="dropdown-item" asp-area="Admin" asp-controller="Product" asp-action="Index">Product</a>
-                                <div class="dropdown-divider"></div>
+                                @*<div class="dropdown-divider"></div>*@
                             </div>
                         </li>
                     </ul>
-                    <form class="d-flex">
+                    @*<form class="d-flex">
                         <input class="form-control me-sm-2" type="search" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-                    </form>
+                    </form>*@
                 </div>
             </div>
         </nav>
     </header>
     <section class="container">
         <main role="main" class="pb-3">
+            <partial name="_Notification" />
             @RenderBody()
         </main>
     </section>
 
     <footer class="border-top footer text-muted opacity-100">
         <div class="container">
-            &copy; 2023 - WebStore.UI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2023 - SimpleWebStore - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @await Component.InvokeAsync("Notyf")
 </body>
