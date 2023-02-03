@@ -15,5 +15,10 @@
         public const string ProductCreateSuccess = "Product has been created successfully";
         public const string ProductUpdateSuccess = "Product has been updated successfully";
         public const string ProductDeleteSuccess = "Product has been deleted successfully";
+
+        public const string CompanyDoesNotExist = "Company doesn't attached for product";
+        public const string CompanytCreateSuccess = "Company has been created successfully";
+        public const string CompanyUpdateSuccess = "Company has been updated successfully";
+        public const string CompanyDeleteSuccess = "Company has been deleted successfully";
     }
 }
