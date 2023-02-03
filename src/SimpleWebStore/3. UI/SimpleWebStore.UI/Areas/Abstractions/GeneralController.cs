@@ -12,11 +12,9 @@ namespace SimpleWebStore.UI.Areas.Abstractions
         private protected readonly INotyfService _toastNotification;
 
         public GeneralController(IUnitOfWork unitOfWork,
-            ILogger<CategoryController> logger,
             INotyfService toastNotification)
         {
             _unitOfWork = unitOfWork;
-            _logger = logger;
             _toastNotification = toastNotification;
         }
     }

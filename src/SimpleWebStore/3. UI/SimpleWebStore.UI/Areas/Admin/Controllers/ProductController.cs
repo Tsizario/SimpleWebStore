@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleWebStore.DAL.UnitOfWork;
 using SimpleWebStore.Domain.Constants;
-using SimpleWebStore.Domain.Entities;
 using SimpleWebStore.UI.Areas.Abstractions;
 using SimpleWebStore.UI.ViewModels;
-using System.Linq;
 
 namespace SimpleWebStore.UI.Areas.Admin.Controllers
 {
@@ -14,14 +12,16 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
     public class ProductController : GeneralController
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<CategoryController> _logger;
 
         public ProductController(IWebHostEnvironment webHostEnvironment,
             IUnitOfWork unitOfWork,
             ILogger<CategoryController> logger,
             INotyfService toastNotification)
-                : base(unitOfWork, logger, toastNotification)
+                : base(unitOfWork, toastNotification)
         {
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         [HttpGet]

@@ -10,11 +10,14 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
     [Area("Admin")]
     public class CoverTypeController : GeneralController
     {
+        private readonly ILogger<CategoryController> _logger;
+
         public CoverTypeController(IUnitOfWork unitOfWork,
             ILogger<CategoryController> logger,
             INotyfService toastNotification)
-                : base(unitOfWork, logger, toastNotification)
+                : base(unitOfWork, toastNotification)
         {
+            _logger = logger;
         }
 
         // GET
