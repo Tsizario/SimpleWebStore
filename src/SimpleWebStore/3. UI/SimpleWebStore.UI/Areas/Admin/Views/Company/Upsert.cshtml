@@ -1,0 +1,75 @@
+﻿@model Company
+@{
+    var check = Model.Id != Guid.Empty ? "Update" : "Create";
+}
+
+<form method="post" asp-action="Upsert" enctype="multipart/form-data">
+    <input asp-for="Id" hidden/>
+    <div class="row">
+        <div class="col-9">
+            <div class="border p-3 mt-4 row">
+                <div class="row pb-2">
+                    <h2 class="text-primary">
+                        @check company
+                    </h2>
+                    <hr />
+                </div>
+                <div class="mb-3 form-group">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" rows=3 class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="mb-3 form-group">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" rows=3 class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+                <div class="mb-3 form-group">
+                    <label asp-for="Address"></label>
+                    <input asp-for="Address" rows=3 class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+                <div class="mb-3 form-group">
+                    <label asp-for="City"></label>
+                    <input asp-for="City" rows=3 class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="mb-3 form-group">
+                    <label asp-for="State"></label>
+                    <input asp-for="State" rows=3 class="form-control" />
+                    <span asp-validation-for="State" class="text-danger"></span>
+                </div>
+                <div class="mb-3 form-group">
+                    <label asp-for="PostalCode"></label>
+                    <input asp-for="PostalCode" rows=3 class="form-control" />
+                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    @if (Model.Id != Guid.Empty)
+                    {
+                        <button type="submit" class="btn btn-outline-success" style="width: 150px;">
+                            @check
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" onclick="return ValidateInput()" class="btn btn-outline-success" style="width: 150px;">
+                            @check
+                        </button>
+                    }
+
+                    <a asp-controller="Company" asp-action="Index" class="btn btn-outline-secondary" style="width: 150px;">
+                        Back to list
+                    </a>
+                </div>
+                <div asp-validation-summary="ModelOnly"></div>
+            </div>
+        </div>
+    </div>   
+</form>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }    
+}
