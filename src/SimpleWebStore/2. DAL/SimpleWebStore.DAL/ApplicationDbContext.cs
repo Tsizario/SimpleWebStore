@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimpleWebStore.Domain.Entities;
-using System.Reflection.Emit;
 
 namespace SimpleWebStore.DAL
 {
@@ -18,6 +17,10 @@ namespace SimpleWebStore.DAL
         public DbSet<CoverType> CoverTypes { get; set; }
 
         public DbSet<Product> Products { get; set; }
+
+        public DbSet<AppUser> ApplicationUsers { get; set; }
+
+        public DbSet<Company> Companies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
