@@ -59,14 +59,14 @@
                     <label asp-for="Product.ImageUrl"></label>
                     <input type="file" id="uploadBox" name="file" class="form-control" />
                 </div>
-                <div class="mb-3 form-group">
+                <div class="mb-3 form-group col-6">
                     <label asp-for="Product.CategoryId"></label>
                     <select asp-for="Product.CategoryId" asp-items="@Model.CategoryList" class="form-select">
                         <option disabled selected>--Select category--</option>
                     </select>
                     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
                 </div>
-                <div class="mb-3 form-group">
+                <div class="mb-3 form-group col-6">
                     <label asp-for="Product.CoverTypeId"></label>
                     <select asp-for="Product.CoverTypeId" asp-items="@Model.CoverTypeList" class="form-select">
                         <option disabled selected>--Select cover type--</option>
@@ -105,19 +105,8 @@
 @section Scripts {
     @{
         <partial name="_ValidationScriptsPartial" />
-    }
-    <script>
-        function ValidateInput() {
-            if (document.getElementById("uploadBox").value=="") {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Please upload an image!'
-                })
-                return false;
-            }
-
-            return true;
-        }        
-    </script>
+        <script src="https://cdn.tiny.cloud/1/wr1rm1la1jtcu2ufxf7b61pviyt5ton8yuvtdy9eskagmvk1/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+        <script src="~/js/tinymce.min.js"></script>
+        <script src="~/js/validateinput.min.js"></script>
+    }    
 }

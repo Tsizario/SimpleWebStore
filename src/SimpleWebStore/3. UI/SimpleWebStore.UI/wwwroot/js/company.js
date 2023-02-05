@@ -1,5 +1,4 @@
 ﻿var dataTable;
-
 $(document).ready(function () {
     loadDataTable();
 });
@@ -8,25 +7,25 @@ function loadDataTable() {
     dataTable = $('#tblData').DataTable(
         {
             "ajax": {
-                "url": "/Admin/Product/GetAll"
+                "url": "/Admin/Company/GetAll"
             },
             "columns": [
-                { "data": "title", "width": "15%"},
-                { "data": "isbn", "width": "15%" },
-                { "data": "price", "width": "15%" },
-                { "data": "author", "width": "15%" },
-                { "data": "category.name", "width": "15%" },
+                { "data": "name", "width": "15%" },
+                { "data": "address", "width": "15%" },
+                { "data": "city", "width": "15%" },
+                { "data": "state", "width": "15%" },
+                { "data": "phoneNumber", "width": "15%" },
                 {
-                    "data": "id", 
+                    "data": "id",
                     "render": function (data) {
                         return `
                             <div class="d-flex justify-content-between">
-                                <a href="/Admin/Product/Upsert?id=${data}" asp-action="Upsert" asp-route-id=@product.Id
+                                <a href="/Admin/Company/Upsert?id=${data}" asp-action="Upsert" asp-route-id=@product.Id
                                     class="btn btn-outline-primary my-custom">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                             Edit
                                 </a>
-                                <a onClick=Delete('/Admin/Product/Delete/${data}')
+                                <a onClick=Delete('/Admin/Company/Delete/${data}')
                                     class="btn btn-outline-danger my-custom" >
                                         <i class="fa-solid fa-trash"></i>
                                             Delete
