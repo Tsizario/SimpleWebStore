@@ -1,7 +1,9 @@
-﻿using SimpleWebStore.DAL.Repositories.CategoryRepository;
+﻿using SimpleWebStore.DAL.Repositories.AppUserRepository;
+using SimpleWebStore.DAL.Repositories.CategoryRepository;
 using SimpleWebStore.DAL.Repositories.CompanyRepository;
 using SimpleWebStore.DAL.Repositories.CoverTypeRepository;
 using SimpleWebStore.DAL.Repositories.ProductRepository;
+using SimpleWebStore.DAL.Repositories.ShoppingCartRepository;
 
 namespace SimpleWebStore.DAL.UnitOfWork
 {
@@ -11,6 +13,8 @@ namespace SimpleWebStore.DAL.UnitOfWork
         ICoverTypeRepository CoverTypeRepository { get; }
         IProductRepository ProductRepository { get; }
         ICompanyRepository CompanyRepository { get; }
+        IShoppingCartRepository ShoppingCartRepository { get; }
+        IAppUserRepository AppUserRepository { get; }
 
         Task<bool> SaveAsync();
     }
