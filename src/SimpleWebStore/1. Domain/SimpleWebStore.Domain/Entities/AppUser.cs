@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleWebStore.Domain.Entities
 {
@@ -15,5 +17,10 @@ namespace SimpleWebStore.Domain.Entities
         public string? State { get; set; }
 
         public string? PostalCode { get; set; }
+        public Guid? CompanyId { get; set; }
+
+        [ForeignKey("CompanyId")]
+        [ValidateNever]
+        public Company Company { get; set; }
     }
 }
