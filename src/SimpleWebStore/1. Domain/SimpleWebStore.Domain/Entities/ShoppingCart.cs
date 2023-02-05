@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using SimpleWebStore.Domain.Abstractions;
-using SimpleWebStore.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SimpleWebStore.UI.ViewModels
+namespace SimpleWebStore.Domain.Entities
 {
     public class ShoppingCart : DbEntity
     {

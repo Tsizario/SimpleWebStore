@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 namespace SimpleWebStore.DAL.Repositories.Abstractions
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity>
-        where TEntity : class, IDbEntity
+        where TEntity : class
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly DbSet<TEntity> _dbSet;
