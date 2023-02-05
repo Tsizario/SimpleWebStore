@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimpleWebStore.Domain.Entities;
+using SimpleWebStore.UI.ViewModels;
 
 namespace SimpleWebStore.DAL
 {
@@ -21,6 +22,8 @@ namespace SimpleWebStore.DAL
         public DbSet<AppUser> ApplicationUsers { get; set; }
 
         public DbSet<Company> Companies { get; set; }
+
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
