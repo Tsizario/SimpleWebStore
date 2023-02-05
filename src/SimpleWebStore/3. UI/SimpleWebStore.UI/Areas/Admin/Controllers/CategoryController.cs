@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimpleWebStore.DAL.UnitOfWork;
 using SimpleWebStore.Domain.Constants;
 using SimpleWebStore.Domain.Entities;
-using SimpleWebStore.UI.Areas.Abstractions;
+using SimpleWebStore.UI.Controllers;
 
 namespace SimpleWebStore.UI.Areas.Admin.Controllers
 {
@@ -82,7 +82,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
+            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(e => e.Id == id);
 
             if (category == null)
             {
@@ -135,7 +135,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
+            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(e => e.Id == id);
 
             if (category == null)
             {
@@ -151,7 +151,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var deletedItem = await _unitOfWork.CategoryRepository.RemoveEntityAsync(id);
+            var deletedItem = await _unitOfWork.CategoryRepository.RemoveEntityAsync(e => e.Id == id);
 
             if (deletedItem == null)
             {

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SimpleWebStore.Domain.Entities;
-using SimpleWebStore.UI.ViewModels;
 
 namespace SimpleWebStore.DAL
 {

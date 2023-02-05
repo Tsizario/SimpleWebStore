@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleWebStore.DAL.UnitOfWork;
 using SimpleWebStore.Domain.Constants;
-using SimpleWebStore.UI.Areas.Abstractions;
+using SimpleWebStore.UI.Controllers;
 using SimpleWebStore.UI.ViewModels;
 
 namespace SimpleWebStore.UI.Areas.Admin.Controllers
@@ -130,7 +130,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             await DeletePhoto(deletedItem.ImageUrl, _webHostEnvironment);
 
-            await _unitOfWork.ProductRepository.RemoveEntityAsync(id);
+            await _unitOfWork.ProductRepository.RemoveEntityAsync(e => e.Id == id);
 
             await _unitOfWork.SaveAsync();
 

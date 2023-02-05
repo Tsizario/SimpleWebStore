@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SimpleWebStore.DAL.UnitOfWork;
 using SimpleWebStore.Domain.Constants;
 using SimpleWebStore.Domain.Entities;
-using SimpleWebStore.UI.Areas.Abstractions;
+using SimpleWebStore.UI.Controllers;
 
 namespace SimpleWebStore.UI.Areas.Admin.Controllers
 {
@@ -96,7 +96,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return Json(new { success = false, message = Errors.CompanyDeletingError });
             }
 
-            await _unitOfWork.CompanyRepository.RemoveEntityAsync(id);
+            await _unitOfWork.CompanyRepository.RemoveEntityAsync(c => c.Id == id);
 
             await _unitOfWork.SaveAsync();
 

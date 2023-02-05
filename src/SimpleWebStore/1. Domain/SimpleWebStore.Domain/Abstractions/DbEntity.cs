@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SimpleWebStore.Domain.Abstractions
 {
-    public class DbEntity : IDbEntity
+    public class DbEntity
     {
         [Key]
         [Column("Id")]

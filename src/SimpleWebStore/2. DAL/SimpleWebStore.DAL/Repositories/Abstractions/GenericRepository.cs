@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SimpleWebStore.Domain.Abstractions;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 namespace SimpleWebStore.DAL.Repositories.Abstractions
@@ -85,9 +83,9 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
             return Task.FromResult(entity);
         }
 
-        public virtual async Task<bool> RemoveEntityAsync(Guid id)
+        public virtual async Task<bool> RemoveEntityAsync(Expression<Func<TEntity, bool>> filter)
         {
-            TEntity candidate = await AllItems.FirstOrDefaultAsync(e => e.Id == id);
+            TEntity candidate = await AllItems.FirstOrDefaultAsync(filter);
 
             if (candidate == null)
             {
