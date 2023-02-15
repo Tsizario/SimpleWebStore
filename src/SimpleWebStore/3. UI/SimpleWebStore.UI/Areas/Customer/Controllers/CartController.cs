@@ -49,6 +49,39 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             return View(ShoppingCartViewModel);
         }
 
+        public async Task<ActionResult> Plus(Guid cartId)
+        {
+            var cart = await _unitOfWork.ShoppingCartRepository.GetEntityAsync(u => u.Id == cartId);
+
+            _unitOfWork.ShoppingCartRepository.IncrementCount(cart, 1);
+
+            await _unitOfWork.SaveAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> Minus(Guid cartId)
+        {
+            var cart = await _unitOfWork.ShoppingCartRepository.GetEntityAsync(u => u.Id == cartId);
+
+            _unitOfWork.ShoppingCartRepository.DecrementCount(cart, 1);
+
+            await _unitOfWork.SaveAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<ActionResult> Remove(Guid cartId)
+        {
+            var cart = await _unitOfWork.ShoppingCartRepository.GetEntityAsync(u => u.Id == cartId);
+
+            await _unitOfWork.ShoppingCartRepository.RemoveEntityAsync(cart);
+
+            await _unitOfWork.SaveAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         private double GetPriceBasedOnQuantity(double quantity, 
             double price, double price50, double price100)
         {

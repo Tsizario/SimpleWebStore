@@ -96,7 +96,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return Json(new { success = false, message = Errors.CompanyDeletingError });
             }
 
-            await _unitOfWork.CompanyRepository.RemoveEntityAsync(c => c.Id == id);
+            await _unitOfWork.CompanyRepository.RemoveEntityAsync(deletedItem);
 
             await _unitOfWork.SaveAsync();
 

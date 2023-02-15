@@ -1,24 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SimpleWebStore.DAL.UnitOfWork;
 using SimpleWebStore.Domain.Entities;
-using SimpleWebStore.UI.ViewModels;
+using SimpleWebStore.UI.Controllers;
+using System.Security.Claims;
 
 namespace BookWebStore.UI.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    public class HomeController : Controller
+    public class HomeController : GeneralController
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(IUnitOfWork unitOfWork,
-            ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork unitOfWork, INotyfService toastNotification)
+            : base(unitOfWork, toastNotification)
         {
-            _unitOfWork = unitOfWork;
-            _logger = logger;
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> Index()
         {
             IEnumerable<Product> productList = await _unitOfWork.ProductRepository.GetAllEntitiesAsync(
                 includeProps: "Category,CoverType");
@@ -26,16 +24,47 @@ namespace BookWebStore.UI.Areas.Customer.Controllers
             return View(productList);
         }
 
-        public async Task<IActionResult> Details(Guid id)
+        [Authorize]
+        public async Task<IActionResult> Details(Guid? productId)
         {
             ShoppingCart cartObj = new()
             {
+                ProductId = productId.Value,
+                Product = await _unitOfWork.ProductRepository.GetEntityAsync(c => c.Id == productId,
+                    includeProps: "Category,CoverType"),
+
                 Count = 1,
-                Product = await _unitOfWork.ProductRepository.GetEntityAsync(c => c.Id == id,
-                    includeProps: "Category,CoverType")
             };
 
             return View(cartObj);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(ShoppingCart shoppingCart)
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier);
+
+            shoppingCart.AppUserId = claim!.Value;
+
+            var cartFromDb = await _unitOfWork.ShoppingCartRepository
+                .GetEntityAsync(cart => cart.AppUserId == claim.Value 
+                    && cart.ProductId == shoppingCart.ProductId);
+
+            if (cartFromDb == null)
+            {
+                await _unitOfWork.ShoppingCartRepository.AddEntityAsync(shoppingCart);
+            }
+            else
+            {
+                _unitOfWork.ShoppingCartRepository.IncrementCount(cartFromDb, shoppingCart.Count);
+            }
+
+            await _unitOfWork.SaveAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

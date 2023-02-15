@@ -15,7 +15,7 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
 
         Task<TEntity> UpdateEntityAsync(TEntity entity);
 
-        Task<bool> RemoveEntityAsync(Expression<Func<TEntity, bool>> filter);
+        Task<bool> RemoveEntityAsync(TEntity entity);
 
         Task<bool> RemoveEntitiesAsync(IEnumerable<TEntity> entities);
     }

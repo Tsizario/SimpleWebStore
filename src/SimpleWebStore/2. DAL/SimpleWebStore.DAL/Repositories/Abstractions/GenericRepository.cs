@@ -83,9 +83,9 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
             return Task.FromResult(entity);
         }
 
-        public virtual async Task<bool> RemoveEntityAsync(Expression<Func<TEntity, bool>> filter)
+        public virtual async Task<bool> RemoveEntityAsync(TEntity entity)
         {
-            TEntity candidate = await AllItems.FirstOrDefaultAsync(filter);
+            TEntity candidate = await AllItems.FirstOrDefaultAsync(i => i == entity);
 
             if (candidate == null)
             {

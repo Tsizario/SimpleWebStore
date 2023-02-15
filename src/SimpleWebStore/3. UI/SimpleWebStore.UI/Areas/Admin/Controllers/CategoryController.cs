@@ -151,7 +151,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var deletedItem = await _unitOfWork.CategoryRepository.RemoveEntityAsync(e => e.Id == id);
+            var deletedItem = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
 
             if (deletedItem == null)
             {
@@ -159,6 +159,8 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
                 return View(nameof(Index));
             }
+
+            await _unitOfWork.CategoryRepository.RemoveEntityAsync(deletedItem);
 
             await _unitOfWork.SaveAsync();
 

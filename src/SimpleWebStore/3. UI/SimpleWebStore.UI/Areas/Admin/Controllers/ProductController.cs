@@ -125,12 +125,12 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             if (deletedItem == null)
             {
-                return Json(new { success = false, message = Errors.ProductDeletingError });
+                return Json(new { success = false, message = Errors.ProductNotFound });
             }
 
             await DeletePhoto(deletedItem.ImageUrl, _webHostEnvironment);
 
-            await _unitOfWork.ProductRepository.RemoveEntityAsync(e => e.Id == id);
+            await _unitOfWork.ProductRepository.RemoveEntityAsync(deletedItem);
 
             await _unitOfWork.SaveAsync();
 
