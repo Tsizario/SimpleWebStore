@@ -5,6 +5,5 @@ namespace SimpleWebStore.DAL.Repositories.ProductRepository
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
-
     }
 }

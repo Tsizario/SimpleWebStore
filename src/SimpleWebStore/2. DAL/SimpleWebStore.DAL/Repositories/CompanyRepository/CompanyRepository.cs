@@ -3,11 +3,14 @@ using SimpleWebStore.Domain.Entities;
 
 namespace SimpleWebStore.DAL.Repositories.CompanyRepository
 {
-    internal class CompanyRepository : GenericRepository<Company>, ICompanyRepository
+    public class CompanyRepository : GenericRepository<Company>, ICompanyRepository
     {
-        internal CompanyRepository(ApplicationDbContext dbContext) 
+        private readonly ApplicationDbContext _dbContext;
+
+        public CompanyRepository(ApplicationDbContext dbContext) 
             : base(dbContext)
         {
+            _dbContext = dbContext;
         }
     }
 }
