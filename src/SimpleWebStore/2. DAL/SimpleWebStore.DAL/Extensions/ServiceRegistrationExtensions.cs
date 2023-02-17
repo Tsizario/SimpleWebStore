@@ -29,6 +29,7 @@ namespace SimpleWebStore.DAL.Extensions
             services.AddSingleton(s => mapperConfig.CreateMapper());
 
             services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+            services.AddSingleton<IEmailSender, EmailSender>();
 
             return services;
         }
