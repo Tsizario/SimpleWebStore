@@ -1,4 +1,8 @@
 ﻿@model ShoppingCartViewModel
+@using Microsoft.Extensions.Options;
+@using SimpleWebStore.Domain.ExternalSettings
+
+@inject IOptions<StripeSettings> Stripe;
 
 <form method="post">
     <br />
@@ -6,8 +10,8 @@
         <div class="card">
             <div class="card-header bg-dark text-light ml-0">
                 <div class="row">
-                    <div class="col-6  pt-2">
-                        <i class="fa fa-shopping-cart"></i> &nbsp;
+                    <div class="col-6 fs-5">
+                        <i class="fa fa-shopping-cart"></i> 
                         Shopping Cart
                     </div>
                     <div class="col-6 text-end">
@@ -19,33 +23,30 @@
                 @foreach (var item in Model.ListCart)
                 {
                     <div class="row">
-                        <div class="d-none d-lg-block col-lg-1 text-center py-2">
+                        <div class="d-none col-lg-1 d-lg-block text-center py-2">
                             <img src="@item.Product.ImageUrl" class="rounded" width="100%" />
                         </div>
                         <div class="col-12 col-lg-6 pt-md-3">
                             <h5><strong>@item.Product.Title</strong></h5>
                             <p><small>@Html.Raw(item.Product.Description)</small></p>
                         </div>
-                        <div class="col-12  col-lg-5 text-center row">
-                            <div class="col-4 text-md-right pt-4">
+                        <div class="col-12 col-lg-5 text-center row">
+                            <div class="col-3 text-md-right pt-4">
                                 <h6><strong>@item.ItemPrice.ToString("c")
                                     <span class="text-muted"> x </span>@item.Count</strong></h6>
                             </div>
-                            <div class="col-6 col-sm-4 col-lg-6 pt-2">
-                                <div class="w-75 btn-group" role="group">
-                                    <a class="btn btn-primary">
-                                        <i class="bi bi-plus-square"></i>
+                            <div class="col-9 text-md-right pt-2">
+                                <div class="w-100 btn-group" role="group">
+                                    <a asp-action="plus" asp-route-cartId="@item.Id" class="btn btn-primary">
+                                        <i class="fa-regular fa-square-plus"></i>
                                     </a> &nbsp;
-                                    <a class="btn btn-warning">
-                                        <i class="bi bi-dash-square"></i>
+                                    <a asp-action="minus" asp-route-cartId="@item.Id" class="btn btn-warning">
+                                        <i class="fa-regular fa-square-minus"></i>
+                                    </a> &nbsp;
+                                    <a asp-action="remove" asp-route-cartId="@item.Id" class="btn btn-danger">
+                                        <i class="fa-solid fa-trash"></i>
                                     </a>
                                 </div>
-
-                            </div>
-                            <div class="col-2 col-sm-4 col-lg-2 text-right pt-2">
-                                <a class="btn btn-danger">
-                                    <i class="bi bi-trash-fill"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -57,7 +58,7 @@
                         <ul class="list-group">
                             <li class="list-group-item d-flex justify-content-between bg-light">
                                 <span class="text-info"> Total (UAH)</span>
-                                <strong class="text-info">@Model.CartTotal.ToString("c")</strong>
+                                <strong class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</strong>
                             </li>
                         </ul>
                     </div>
@@ -68,7 +69,7 @@
             <div class="card-footer">
                 <div class="card-footer row">
                     <div class="col-sm-12 col-lg-4 col-md-6 offset-lg-8 offset-md-6 ">
-                        <a class="btn btn-success form-control">Summary</a>
+                        <a asp-action="Summary" class="btn btn-success form-control">Summary</a>
                     </div>
                 </div>
             </div>
