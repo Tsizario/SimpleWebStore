@@ -32,5 +32,20 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
 
             return true;
         }
+
+        public async Task<bool> UpdateStripePaymentId(Guid id, string sessionId, string? paymentIntentId)
+        {
+            var orderFromDb = await _dbContext.OrderHeaders.FirstOrDefaultAsync(o => o.Id == id);
+
+            if (orderFromDb == null)
+            {
+                return false;
+            }
+
+            orderFromDb.SessionId = sessionId;
+            orderFromDb.PaymentStatus = paymentIntentId;
+
+            return true;
+        }
     }
 }
