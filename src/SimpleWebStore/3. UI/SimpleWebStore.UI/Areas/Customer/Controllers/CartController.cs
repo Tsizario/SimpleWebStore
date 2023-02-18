@@ -29,9 +29,8 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             _logger = logger;
         }
 
+        [BindProperty]
         public ShoppingCartViewModel ShoppingCartViewModel { get; set; }
-
-        public int OrderTotal { get; set; }
 
         [HttpGet]
         public async Task<ActionResult> Index()
@@ -47,7 +46,7 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
                 OrderHeader = new()
             };
 
-            foreach(var cart in ShoppingCartViewModel.ListCart)
+            foreach (var cart in ShoppingCartViewModel.ListCart)
             {
                 cart.ItemPrice = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price,
                     cart.Product.Price50, cart.Product.Price100);
@@ -211,6 +210,7 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<ActionResult> Minus(Guid cartId)
         {
             var cart = await _unitOfWork.ShoppingCartRepository.GetEntityAsync(u => u.Id == cartId);
@@ -231,6 +231,7 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
         public async Task<ActionResult> Remove(Guid cartId)
         {
             var cart = await _unitOfWork.ShoppingCartRepository.GetEntityAsync(u => u.Id == cartId);
@@ -244,7 +245,7 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private double GetPriceBasedOnQuantity(double quantity, 
+        private double GetPriceBasedOnQuantity(double quantity,
             double price, double price50, double price100)
         {
             var unsignedDouble = Math.Abs(quantity);

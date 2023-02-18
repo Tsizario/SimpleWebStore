@@ -17,7 +17,7 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
 
         public IQueryable<TEntity> AllItems => _dbSet;
 
-        public virtual async Task<IEnumerable<TEntity>> GetAllEntitiesAsync(
+        public virtual async Task<List<TEntity>> GetAllEntitiesAsync(
             Expression<Func<TEntity, bool>> filter = null, 
             string includeProps = null)
         {

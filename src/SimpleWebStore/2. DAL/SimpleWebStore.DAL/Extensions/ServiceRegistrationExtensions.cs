@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SimpleWebStore.DAL.Helpers;
 using SimpleWebStore.DAL.MapperProfiles;
 using SimpleWebStore.DAL.UnitOfWork;
+using SimpleWebStore.Domain.ExternalSettings;
 
 namespace SimpleWebStore.DAL.Extensions
 {
@@ -18,7 +19,7 @@ namespace SimpleWebStore.DAL.Extensions
             {
                 config.UseSqlServer(
                     configuration.GetConnectionString("SimpleWebStoreConnectionString"));
-            });
+            });            
 
             var mapperConfig = new MapperConfiguration(m =>
             {

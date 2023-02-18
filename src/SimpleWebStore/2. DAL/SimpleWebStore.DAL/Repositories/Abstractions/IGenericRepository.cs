@@ -7,7 +7,7 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
     {
         public IQueryable<TEntity> AllItems { get; }
 
-        Task<IEnumerable<TEntity>> GetAllEntitiesAsync(Expression<Func<TEntity, bool>> filter = null, string includeProps = null);
+        Task<List<TEntity>> GetAllEntitiesAsync(Expression<Func<TEntity, bool>> filter = null, string includeProps = null);
 
         Task<TEntity> GetEntityAsync(Expression<Func<TEntity, bool>>? filter = null, bool tracked = true, string includeProps = null);
 

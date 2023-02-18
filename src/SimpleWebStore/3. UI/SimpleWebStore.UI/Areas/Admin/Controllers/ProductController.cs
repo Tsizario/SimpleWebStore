@@ -27,13 +27,6 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            //var allCoverTypes = await _unitOfWork.ProductRepository.GetAllEntitiesAsync();
-
-            //if (allCoverTypes == null)
-            //{
-            //    _toastNotification.Error(Errors.CategorySameNumber);
-            //}
-
             return View();
         }
 
@@ -90,7 +83,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
                 if (url != null)
                 {
-                    await DeletePhoto(url, _webHostEnvironment);
+                    DeletePhoto(url, _webHostEnvironment);
                 }
 
                 viewModel.Product.ImageUrl = await UploadPhoto(url, file, _webHostEnvironment);
@@ -128,7 +121,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 return Json(new { success = false, message = Errors.ProductNotFound });
             }
 
-            await DeletePhoto(deletedItem.ImageUrl, _webHostEnvironment);
+            DeletePhoto(deletedItem.ImageUrl, _webHostEnvironment);
 
             await _unitOfWork.ProductRepository.RemoveEntityAsync(deletedItem);
 
@@ -175,7 +168,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
             return url;
         }
 
-        private async Task<bool> DeletePhoto(string url, IWebHostEnvironment environment)
+        private bool DeletePhoto(string url, IWebHostEnvironment environment)
         {
             var oldImage = Path.Combine(environment.WebRootPath, url.TrimStart('\\'));
 

@@ -35,7 +35,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Create()
+        public ActionResult Create()
         {
             return View();
         }
