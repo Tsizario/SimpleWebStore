@@ -40,9 +40,9 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
 
             ShoppingCartViewModel = new ShoppingCartViewModel()
             {
-                ListCart = _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
+                ListCart = await _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
                     u => u.AppUserId == claim.Value,
-                    includeProps: "Product").Result,
+                    includeProps: "Product"),
                 OrderHeader = new()
             };
 
@@ -65,9 +65,9 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
 
             ShoppingCartViewModel = new ShoppingCartViewModel()
             {
-                ListCart = _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
+                ListCart = await _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
                     u => u.AppUserId == claim.Value,
-                    includeProps: "Product").Result,
+                    includeProps: "Product"),
                 OrderHeader = new()
                 {
                     AppUser = _unitOfWork.AppUserRepository.GetEntityAsync(u => u.Id == claim.Value).Result,
@@ -91,42 +91,45 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
         }
 
         [HttpPost]
+        [ActionName("Summary")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Summary(ShoppingCartViewModel shoppingCartViewModel)
+        public async Task<ActionResult> SummaryPost()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity!.FindFirst(ClaimTypes.NameIdentifier);
 
-            shoppingCartViewModel.ListCart = _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
+            ShoppingCartViewModel.ListCart = await _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
                     u => u.AppUserId == claim.Value,
-                    includeProps: "Product").Result;
+                    includeProps: "Product");
 
-            shoppingCartViewModel.OrderHeader.PaymentStatus = PaymentStatuses.PaymentStatusPending;
-            shoppingCartViewModel.OrderHeader.OrderStatus = Statuses.StatusPending;
-            shoppingCartViewModel.OrderHeader.OrderDate = DateTime.Now;
-            shoppingCartViewModel.OrderHeader.AppUserId = claim.Value;
+            ShoppingCartViewModel.OrderHeader.PaymentStatus = PaymentStatuses.PaymentStatusPending;
+            ShoppingCartViewModel.OrderHeader.OrderStatus = Statuses.StatusPending;
+            ShoppingCartViewModel.OrderHeader.OrderDate = DateTime.Now;
+            ShoppingCartViewModel.OrderHeader.AppUserId = claim.Value;
 
-            foreach (var cart in shoppingCartViewModel.ListCart)
+            foreach (var cart in ShoppingCartViewModel.ListCart)
             {
                 cart.ItemPrice = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price,
                     cart.Product.Price50, cart.Product.Price100);
 
-                shoppingCartViewModel.OrderHeader.OrderTotal += (cart.ItemPrice * cart.Count);
+                ShoppingCartViewModel.OrderHeader.OrderTotal += (cart.ItemPrice * cart.Count);
             }
 
-            await _unitOfWork.OrderHeaderRepository.AddEntityAsync(shoppingCartViewModel.OrderHeader);
+            await _unitOfWork.OrderHeaderRepository.AddEntityAsync(ShoppingCartViewModel.OrderHeader);
+            await _unitOfWork.SaveAsync();
 
-            foreach (var cart in shoppingCartViewModel.ListCart)
+            foreach (var cart in ShoppingCartViewModel.ListCart)
             {
                 OrderDetail orderDetail = new()
                 {
                     ProductId = cart.ProductId,
-                    OrderId = shoppingCartViewModel.OrderHeader.Id,
+                    OrderId = ShoppingCartViewModel.OrderHeader.Id,
                     Price = cart.ItemPrice,
                     Count = cart.Count,
                 };
 
                 await _unitOfWork.OrderDetailRepository.AddEntityAsync(orderDetail);
+                await _unitOfWork.SaveAsync();
             }
 
             var domain = "https://localhost:7180/";
@@ -134,7 +137,7 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             {
                 LineItems = new List<SessionLineItemOptions>(),                
                 Mode = "payment",
-                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={shoppingCartViewModel.OrderHeader.Id}",
+                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartViewModel.OrderHeader.Id}",
                 CancelUrl = domain + $"customer/cart/Index",
             };
 
@@ -170,14 +173,6 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             Response.Headers.Add("Location", session.Url);
 
             return new StatusCodeResult(303);
-
-            //await _unitOfWork.ShoppingCartRepository.RemoveEntitiesAsync(shoppingCartViewModel.ListCart);
-
-            //await _unitOfWork.SaveAsync();
-
-            //_toastNotification.Success(Notifications.OrderCreateSuccess);
-
-            //return RedirectToAction(nameof(Index), "Home");            
         }
 
         public async Task<ActionResult> OrderConfirmation(Guid id)
@@ -186,7 +181,7 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
             var service = new SessionService();
             Session session = service.Get(orderHeader.SessionId);
 
-            if(session.PaymentStatus.ToLower() == "paid")
+            if (session.PaymentStatus.ToLower() == "paid")
             {
                 await _unitOfWork.OrderHeaderRepository.UpdateStatus(id,
                     Statuses.StatusApproved, PaymentStatuses.PaymentStatusApproved);
@@ -196,6 +191,14 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
 
             List<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
                 u => u.AppUserId == orderHeader.AppUserId);
+
+            await _unitOfWork.ShoppingCartRepository.RemoveEntitiesAsync(shoppingCarts);
+
+            await _unitOfWork.SaveAsync();
+
+            //_toastNotification.Success(Notifications);
+
+            return View(id);
         }
 
         [HttpGet]

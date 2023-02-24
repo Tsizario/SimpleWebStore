@@ -33,7 +33,7 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
             return true;
         }
 
-        public async Task<bool> UpdateStripePaymentId(Guid id, string sessionId, string? paymentIntentId)
+        public async Task<bool> UpdateStripePaymentId(Guid id, string sessionId, string paymentIntentId)
         {
             var orderFromDb = await _dbContext.OrderHeaders.FirstOrDefaultAsync(o => o.Id == id);
 
