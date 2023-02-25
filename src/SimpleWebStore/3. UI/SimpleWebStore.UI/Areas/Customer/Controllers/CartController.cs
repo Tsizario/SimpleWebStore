@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using SimpleWebStore.DAL.UnitOfWork;
 using SimpleWebStore.Domain.Constants;
 using SimpleWebStore.Domain.Entities;
@@ -102,8 +103,6 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
                     u => u.AppUserId == claim.Value,
                     includeProps: "Product");
 
-            ShoppingCartViewModel.OrderHeader.PaymentStatus = PaymentStatuses.PaymentStatusPending;
-            ShoppingCartViewModel.OrderHeader.OrderStatus = Statuses.StatusPending;
             ShoppingCartViewModel.OrderHeader.OrderDate = DateTime.Now;
             ShoppingCartViewModel.OrderHeader.AppUserId = claim.Value;
 
@@ -115,8 +114,21 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
                 ShoppingCartViewModel.OrderHeader.OrderTotal += (cart.ItemPrice * cart.Count);
             }
 
+            var appUser = await _unitOfWork.AppUserRepository.GetEntityAsync(
+                u => u.Id == ShoppingCartViewModel.OrderHeader.AppUserId);
+
+            if (appUser.CompanyId.GetValueOrDefault() != Guid.Empty)
+            {
+                ShoppingCartViewModel.OrderHeader.PaymentStatus = PaymentStatuses.PaymentStatusDelayedPayment;
+                ShoppingCartViewModel.OrderHeader.OrderStatus = Statuses.StatusApproved;
+            }
+            else
+            {
+                ShoppingCartViewModel.OrderHeader.PaymentStatus = PaymentStatuses.PaymentStatusPending;
+                ShoppingCartViewModel.OrderHeader.OrderStatus = Statuses.StatusPending;
+            }
+
             await _unitOfWork.OrderHeaderRepository.AddEntityAsync(ShoppingCartViewModel.OrderHeader);
-            await _unitOfWork.SaveAsync();
 
             foreach (var cart in ShoppingCartViewModel.ListCart)
             {
@@ -129,64 +141,76 @@ namespace SimpleWebStore.UI.Areas.Customer.Controllers
                 };
 
                 await _unitOfWork.OrderDetailRepository.AddEntityAsync(orderDetail);
-                await _unitOfWork.SaveAsync();
             }
-
-            var domain = "https://localhost:7180/";
-            var options = new SessionCreateOptions
-            {
-                LineItems = new List<SessionLineItemOptions>(),                
-                Mode = "payment",
-                SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartViewModel.OrderHeader.Id}",
-                CancelUrl = domain + $"customer/cart/Index",
-            };
-
-            foreach (var item in ShoppingCartViewModel.ListCart)
-            {
-                var sessionLineItem = new SessionLineItemOptions
-                {
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        UnitAmount = (long)(item.ItemPrice*100),
-                        Currency = "uah",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = item.Product.Title
-                        },
-                    },
-                    Quantity = item.Count,
-                };
-
-                options.LineItems.Add(sessionLineItem);
-            }
-
-            var service = new SessionService();
-            Session session = service.Create(options);
-
-            await _unitOfWork.OrderHeaderRepository.UpdateStripePaymentId(
-                ShoppingCartViewModel.OrderHeader.Id, 
-                session.Id,
-                session.PaymentIntentId);
 
             await _unitOfWork.SaveAsync();
 
-            Response.Headers.Add("Location", session.Url);
+            if (ShoppingCartViewModel.OrderHeader.AppUser.CompanyId.GetValueOrDefault() == Guid.Empty)
+            {
+                //stripe settings
+                var domain = "https://localhost:7180/";
+                var options = new SessionCreateOptions
+                {
+                    LineItems = new List<SessionLineItemOptions>(),
+                    Mode = "payment",
+                    SuccessUrl = domain + $"customer/cart/OrderConfirmation?id={ShoppingCartViewModel.OrderHeader.Id}",
+                    CancelUrl = domain + $"customer/cart/Index",
+                };
 
-            return new StatusCodeResult(303);
+                foreach (var item in ShoppingCartViewModel.ListCart)
+                {
+                    var sessionLineItem = new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(item.ItemPrice * 100),
+                            Currency = "uah",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = item.Product.Title
+                            },
+                        },
+                        Quantity = item.Count,
+                    };
+
+                    options.LineItems.Add(sessionLineItem);
+                }
+
+                var service = new SessionService();
+                Session session = service.Create(options);
+
+                await _unitOfWork.OrderHeaderRepository.UpdateStripePaymentId(
+                    ShoppingCartViewModel.OrderHeader.Id,
+                    session.Id,
+                    session.PaymentIntentId);
+
+                await _unitOfWork.SaveAsync();
+
+                Response.Headers.Add("Location", session.Url);
+
+                return new StatusCodeResult(303);
+            }
+
+            return RedirectToAction("OrderConfirmation", "Cart",
+                new { id = ShoppingCartViewModel.OrderHeader.Id });
         }
 
         public async Task<ActionResult> OrderConfirmation(Guid id)
         {
             OrderHeader orderHeader = await _unitOfWork.OrderHeaderRepository.GetEntityAsync(u => u.Id == id);
-            var service = new SessionService();
-            Session session = service.Get(orderHeader.SessionId);
 
-            if (session.PaymentStatus.ToLower() == "paid")
+            if (orderHeader.PaymentStatus != PaymentStatuses.PaymentStatusDelayedPayment)
             {
-                await _unitOfWork.OrderHeaderRepository.UpdateStatus(id,
-                    Statuses.StatusApproved, PaymentStatuses.PaymentStatusApproved);
+                var service = new SessionService();
+                Session session = service.Get(orderHeader.SessionId);
 
-                await _unitOfWork.SaveAsync();
+                if (session.PaymentStatus.ToLower() == "paid")
+                {
+                    await _unitOfWork.OrderHeaderRepository.UpdateStatus(id,
+                        Statuses.StatusApproved, PaymentStatuses.PaymentStatusApproved);
+
+                    await _unitOfWork.SaveAsync();
+                }
             }
 
             List<ShoppingCart> shoppingCarts = await _unitOfWork.ShoppingCartRepository.GetAllEntitiesAsync(
