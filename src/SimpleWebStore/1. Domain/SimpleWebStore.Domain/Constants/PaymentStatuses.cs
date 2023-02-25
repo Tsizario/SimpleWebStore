@@ -2,9 +2,9 @@
 {
     public static class PaymentStatuses
 	{
-        public const string PaymentStatusPending = "Pending";
-        public const string PaymentStatusApproved = "Approved";
+        public const string PaymentStatusPending = "Payment pending";
+        public const string PaymentStatusApproved = "Payment approved";
         public const string PaymentStatusDelayedPayment = "Approved for delayed payment";
-        public const string PaymentStatusRejected = "Rejected";
-    }
+        public const string PaymentStatusRejected = "Payment rejected";        
+    }    
 }
