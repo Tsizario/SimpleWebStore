@@ -1,0 +1,78 @@
+﻿@using SimpleWebStore.Domain.Constants
+@{
+    var status = Context.Request.Query["status"];
+    var pending = "";
+    var inprocess = "";
+    var completed = "";
+    var approved = "";
+    var allOrders = "";
+
+    switch (status)
+    {
+        case "pending":
+            pending = "bg-secondary text-white";
+            break;
+        case "inprocess":
+            inprocess = "bg-primary text-white";
+            break;
+        case "completed":
+            completed = "bg-warning text-white";
+            break;
+        case "approved":
+            approved = "bg-success text-white";
+            break;
+        case "all":
+            allOrders = "bg-dark text-white";
+            break;
+    }
+}
+
+<div class="p-3">
+    <div class="d-flex justify-content-between pt-4">
+        <div class="p-2">
+            <h2 class="text-primary">Order list</h2>
+        </div>
+        <div class="p-2">
+            <ul class="list-group list-group-horizontal-sm">
+                <a style="text-decoration:none;" asp-controller="Order"
+                    asp-action="Index" asp-route-status="inprocess">
+                    <div class="list-group-item @inprocess">@Statuses.StatusInProcess</div>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order"
+                    asp-action="Index" asp-route-status="pending">
+                    <div class="list-group-item @pending">@PaymentStatuses.PaymentStatusPending</div>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order"
+                    asp-action="Index" asp-route-status="completed">
+                    <div class="list-group-item @completed">Completed</div>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order"
+                   asp-action="Index" asp-route-status="approved">
+                    <div class="list-group-item @approved">@Statuses.StatusApproved</div>
+                </a>
+                <a style="text-decoration:none;" asp-controller="Order"
+                    asp-action="Index" asp-route-status="all">
+                    <div class="list-group-item @allOrders">All orders</div>
+                </a>
+            </ul>
+        </div>
+    </div>
+
+    <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Phone number</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/js/order.js"></script>
+}
