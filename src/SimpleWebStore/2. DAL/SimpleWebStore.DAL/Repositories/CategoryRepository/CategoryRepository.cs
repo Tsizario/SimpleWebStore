@@ -13,12 +13,5 @@ namespace SimpleWebStore.DAL.Repositories.CategoryRepository
         {
             _dbContext = dbContext;
         }
-
-        public override Task<Category> UpdateEntityAsync(Category item)
-        {
-            _dbContext.Categories.Update(item);
-
-            return Task.FromResult(item);
-        }
     }
 }
