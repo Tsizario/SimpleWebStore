@@ -15,7 +15,6 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
             _dbSet = _dbContext.Set<TEntity>();
         }
 
-        public IQueryable<TEntity> AllItems => _dbSet;
 
         public virtual async Task<List<TEntity>> GetAllEntitiesAsync(
             Expression<Func<TEntity, bool>> filter = null, 
@@ -85,7 +84,7 @@ namespace SimpleWebStore.DAL.Repositories.Abstractions
 
         public virtual async Task<bool> RemoveEntityAsync(TEntity entity)
         {
-            TEntity candidate = await AllItems.FirstOrDefaultAsync(i => i == entity);
+            TEntity candidate = await _dbSet.FirstOrDefaultAsync(i => i == entity);
 
             if (candidate == null)
             {
