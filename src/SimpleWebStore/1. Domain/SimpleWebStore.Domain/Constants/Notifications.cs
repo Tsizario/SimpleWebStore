@@ -22,5 +22,9 @@
         public const string CompanyDeleteSuccess = "Company has been deleted successfully";
 
         public const string OrderCreateSuccess = "Order has been created successfully";
+        public const string OrderCancelSuccess = "Order has been cancelled successfully";
+        public const string OrderHeaderUpdateSuccess = "Order header has been updated successfully";
+        public const string OrderStatusUpdateSuccess = "Order status has been updated successfully";
+        public const string OrderShipSuccess = "Order has been shipped successfully";
     }
 }

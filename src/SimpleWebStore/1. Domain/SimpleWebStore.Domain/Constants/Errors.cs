@@ -24,5 +24,7 @@
         public const string CompanyAddingError = "Error while adding company";
         public const string CompanyDeletingError = "Error while deleting company";
         public const string CompanyDoesNotExist = "Company does not exist";
+
+        public const string ShoppingCartEmpty = "Shopping cart is empty!";
     }
 }
