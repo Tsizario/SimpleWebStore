@@ -127,46 +127,76 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet]
+        [HttpDelete]
+        [ActionName("Delete")]
         public async Task<ActionResult> Delete(Guid? id)
         {
-            if (id == null || id == Guid.Empty)
-            {
-                return NotFound();
-            }
-
-            var category = await _unitOfWork.CategoryRepository.GetEntityAsync(e => e.Id == id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return View(category);
-        }
-
-        // DELETE
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(Guid id)
-        {
-            var deletedItem = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
+            var deletedItem = await _unitOfWork.CategoryRepository.GetEntityAsync(u => u.Id == id);
 
             if (deletedItem == null)
             {
-                _toastNotification.Error(Errors.CategoryDoesNotExist);
-
-                return View(nameof(Index));
+                return Json(new { success = false, message = Errors.CategoryNotFound });
             }
 
             await _unitOfWork.CategoryRepository.RemoveEntityAsync(deletedItem);
 
             await _unitOfWork.SaveAsync();
 
-            _toastNotification.Success(Notifications.CategoryDeleteSuccess);
-
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = true, message = Notifications.CategoryDeleteSuccess });
         }
+
+        #region API Calls
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var companyList = await _unitOfWork.CategoryRepository.GetAllEntitiesAsync();
+
+            return Json(new { data = companyList });
+        }
+
+        #endregion
+
+        //[HttpGet]
+        //public async Task<ActionResult> Delete(Guid? id)
+        //{
+        //    if (id == null || id == Guid.Empty)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var category = await _unitOfWork.CategoryRepository.GetEntityAsync(e => e.Id == id);
+
+        //    if (category == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(category);
+        //}
+
+        //// DELETE
+        //[HttpPost]
+        //[ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Delete(Guid id)
+        //{
+        //    var deletedItem = await _unitOfWork.CategoryRepository.GetEntityAsync(c => c.Id == id);
+
+        //    if (deletedItem == null)
+        //    {
+        //        _toastNotification.Error(Errors.CategoryDoesNotExist);
+
+        //        return View(nameof(Index));
+        //    }
+
+        //    await _unitOfWork.CategoryRepository.RemoveEntityAsync(deletedItem);
+
+        //    await _unitOfWork.SaveAsync();
+
+        //    _toastNotification.Success(Notifications.CategoryDeleteSuccess);
+
+        //    return RedirectToAction(nameof(Index));
+        //}
     }
 }

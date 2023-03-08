@@ -112,46 +112,34 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpGet]
+        [HttpDelete]
+        [ActionName("Delete")]
         public async Task<ActionResult> Delete(Guid? id)
         {
-            if (id == null || id == Guid.Empty)
-            {
-                return NotFound();
-            }
-
-            var category = await _unitOfWork.CoverTypeRepository.GetEntityAsync(e => e.Id == id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            return View(category);
-        }
-
-        // DELETE
-        [HttpPost]
-        [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(Guid id)
-        {
-            var deletedItem = await _unitOfWork.CoverTypeRepository.GetEntityAsync(c => c.Id == id);
+            var deletedItem = await _unitOfWork.CoverTypeRepository.GetEntityAsync(u => u.Id == id);
 
             if (deletedItem == null)
             {
-                _toastNotification.Error(Errors.CoverTypeDoesNotExist);
-
-                return View(nameof(Index));
+                return Json(new { success = false, message = Errors.CoverTypeAddingError });
             }
 
             await _unitOfWork.CoverTypeRepository.RemoveEntityAsync(deletedItem);
 
             await _unitOfWork.SaveAsync();
 
-            _toastNotification.Success(Notifications.CoverTypeDeleteSuccess);
+            return Json(new { success = true, message = Notifications.CoverTypeDeleteSuccess });
+        }        
 
-            return RedirectToAction(nameof(Index));
+        #region API Calls
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var companyList = await _unitOfWork.CoverTypeRepository.GetAllEntitiesAsync();
+
+            return Json(new { data = companyList });
         }
+
+        #endregion
     }
 }

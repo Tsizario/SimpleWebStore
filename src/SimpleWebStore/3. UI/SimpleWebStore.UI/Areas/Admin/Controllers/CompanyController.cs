@@ -26,13 +26,6 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            //var allCoverTypes = await _unitOfWork.ProductRepository.GetAllEntitiesAsync();
-
-            //if (allCoverTypes == null)
-            //{
-            //    _toastNotification.Error(Errors.CategorySameNumber);
-            //}
-
             return View();
         }
 

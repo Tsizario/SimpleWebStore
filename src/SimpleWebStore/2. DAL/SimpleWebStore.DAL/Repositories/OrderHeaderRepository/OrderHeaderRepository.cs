@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SimpleWebStore.DAL.Repositories.Abstractions;
 using SimpleWebStore.Domain.Entities;
 
@@ -7,11 +8,29 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
     public class OrderHeaderRepository : GenericRepository<OrderHeader>, IOrderHeaderRepository
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public OrderHeaderRepository(ApplicationDbContext dbContext)
+        public OrderHeaderRepository(ApplicationDbContext dbContext,
+            IMapper mapper)
             : base(dbContext)
         {
             _dbContext = dbContext;
+            _mapper = mapper;   
+        }
+
+        public override async Task<OrderHeader> UpdateEntityAsync(OrderHeader updatedEntity)
+        {
+            var objFromDb = await _dbContext.OrderHeaders.FirstOrDefaultAsync(p => p.Id == updatedEntity.Id);
+
+            if (objFromDb == null)
+            {
+                return null;
+            }
+
+            _mapper.Map(updatedEntity, objFromDb);
+            _dbContext.Entry(objFromDb).State = EntityState.Modified;
+
+            return objFromDb;
         }
 
         public async Task<bool> UpdateStatus(Guid id, string status, string? paymentStatus = null)
@@ -23,12 +42,15 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
                 return false;
             }
 
-            orderFromDb.OrderStatus = status;
-
-            if (paymentStatus != null)
+            var newOrderHeader = new OrderHeader()
             {
-                orderFromDb.PaymentStatus = paymentStatus;
-            }
+                OrderStatus = status,
+                PaymentStatus = paymentStatus
+            };
+
+            _mapper.Map(newOrderHeader, orderFromDb);
+
+            await _dbContext.SaveChangesAsync();
 
             return true;
         }
@@ -42,8 +64,16 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
                 return false;
             }
 
-            orderFromDb.SessionId = sessionId;
-            orderFromDb.PaymentStatus = paymentIntentId;
+            var newOrderHeader = new OrderHeader()
+            {
+                PaymentDate = DateTime.Now,
+                SessionId = sessionId,
+                PaymentStatus = paymentIntentId
+            };
+
+            _mapper.Map(newOrderHeader, orderFromDb);
+
+            await _dbContext.SaveChangesAsync();    
 
             return true;
         }
