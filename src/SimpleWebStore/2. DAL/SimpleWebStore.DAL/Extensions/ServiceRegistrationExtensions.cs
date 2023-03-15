@@ -25,6 +25,7 @@ namespace SimpleWebStore.DAL.Extensions
             {
                 m.AddProfile<ProductProfile>();
                 m.AddProfile<OrderHeaderProfile>();
+                m.AddProfile<OrderDetailProfile>();
             });
 
             services.AddSingleton(s => mapperConfig.CreateMapper());

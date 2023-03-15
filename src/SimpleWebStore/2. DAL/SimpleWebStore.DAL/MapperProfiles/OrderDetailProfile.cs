@@ -3,11 +3,11 @@ using SimpleWebStore.Domain.Entities;
 
 namespace SimpleWebStore.DAL.MapperProfiles
 {
-    public class ProductProfile : Profile
+    public class OrderDetailProfile : Profile
     {
-        public ProductProfile()
+        public OrderDetailProfile()
         {
-            CreateMap<Product, Product>()
+            CreateMap<OrderDetail, OrderDetail>()
                 .ForAllMembers(opts => opts.Condition((source, destination, sourceMember) =>
                     sourceMember != null));
         }
