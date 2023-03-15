@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SimpleWebStore.DAL.Repositories.Abstractions;
+using SimpleWebStore.Domain.Constants;
 using SimpleWebStore.Domain.Entities;
 
 namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
@@ -64,18 +65,11 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
                 return false;
             }
 
-            var newOrderHeader = new OrderHeader()
-            {
-                PaymentDate = DateTime.Now,
-                SessionId = sessionId,
-                PaymentStatus = paymentIntentId
-            };
+            orderFromDb.PaymentDate = DateTime.Now;
+            orderFromDb.SessionId = sessionId;
+            orderFromDb.PaymentStatus = paymentIntentId;
 
-            _mapper.Map(newOrderHeader, orderFromDb);
-
-            await _dbContext.SaveChangesAsync();    
-
-            return true;
+            return await _dbContext.SaveChangesAsync() > 0;
         }
     }
 }
