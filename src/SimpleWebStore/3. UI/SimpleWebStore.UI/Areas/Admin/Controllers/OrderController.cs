@@ -99,6 +99,8 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ShipOrder()
         {
+            var orderHeader = await _unitOfWork.OrderHeaderRepository.GetEntityAsync(c => c.Id == OrderVM.OrderHeader.Id);
+
             var orderHeaderToUpdate = new OrderHeader()
             {
                 Id = OrderVM.OrderHeader.Id,
@@ -107,6 +109,11 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 OrderStatus = Statuses.StatusShipped,
                 ShippingDate = DateTime.Now
             };
+
+            if (orderHeader.PaymentStatus == PaymentStatuses.PaymentStatusDelayedPayment)
+            {
+                orderHeaderToUpdate.PaymentDueDate = DateTime.Now.AddDays(30);
+            }
 
             await _unitOfWork.OrderHeaderRepository.UpdateEntityAsync(orderHeaderToUpdate);
 

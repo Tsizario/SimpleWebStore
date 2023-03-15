@@ -10,6 +10,7 @@
 
         public const string CoverTypeNotFound = "Cover type not found";
         public const string CoverTypeAddingError = "Error while adding cover type";
+        public const string CoverTypeDeletingError = "Error while deleting cover type";
         public const string CoverTypeDoesNotExist = "Cover type doesn't exist";
 
         public const string ProductNotFound = "Product not found";

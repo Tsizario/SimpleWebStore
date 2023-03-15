@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SimpleWebStore.DAL.Repositories.Abstractions;
-using SimpleWebStore.Domain.Constants;
 using SimpleWebStore.Domain.Entities;
 
 namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
@@ -67,7 +66,7 @@ namespace SimpleWebStore.DAL.Repositories.OrderHeaderRepository
 
             orderFromDb.PaymentDate = DateTime.Now;
             orderFromDb.SessionId = sessionId;
-            orderFromDb.PaymentStatus = paymentIntentId;
+            orderFromDb.PaymentIntentId = paymentIntentId;
 
             return await _dbContext.SaveChangesAsync() > 0;
         }

@@ -12,6 +12,8 @@ namespace SimpleWebStore.DAL.MapperProfiles
                 .ForMember(src => src.Id, opt => opt.Ignore())
                 .ForMember(src => src.OrderTotal, opt => opt.Ignore())
                 .ForMember(src => src.OrderDate, opt => opt.Ignore())
+                .ForMember(src => src.PaymentDate, opt => opt.Ignore())
+                .ForMember(src => src.PaymentStatus, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((source, destination, sourceMember) =>
                     sourceMember != null));
 
