@@ -54,7 +54,9 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
                 Name = OrderVM.OrderHeader.Name,
                 PhoneNumber = OrderVM.OrderHeader.PhoneNumber,
                 Address = OrderVM.OrderHeader.Address,
+                OrderDate = OrderVM.OrderHeader.OrderDate,
                 City = OrderVM.OrderHeader.City,
+                State = OrderVM.OrderHeader.State,
                 PostalCode = OrderVM.OrderHeader.PostalCode
             };
 
@@ -65,7 +67,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             if (OrderVM.OrderHeader.TrackingNumber != null)
             {
-                orderHeaderToUpdate.Carrier = OrderVM.OrderHeader.TrackingNumber;
+                orderHeaderToUpdate.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
             }
 
             var orderHeaderFromDb = await _unitOfWork.OrderHeaderRepository.UpdateEntityAsync(orderHeaderToUpdate);
@@ -178,9 +180,18 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
             }
 
             if (User.IsInRole(Roles.Role_Admin) || User.IsInRole(Roles.Role_Employee))
-            {   
-                orderHeadersFromDb = await _unitOfWork.OrderHeaderRepository
-                    .GetAllEntitiesAsync(includeProps: "AppUser");                
+            { 
+                if (statusToTheBase == PaymentStatuses.PaymentStatusDelayedPayment)
+                {
+                    orderHeadersFromDb = await _unitOfWork.OrderHeaderRepository
+                        .GetAllEntitiesAsync(st => st.PaymentStatus == statusToTheBase,
+                            includeProps: "AppUser");
+                }
+                else
+                {
+                    orderHeadersFromDb = await _unitOfWork.OrderHeaderRepository
+                        .GetAllEntitiesAsync(includeProps: "AppUser");
+                }
             }
             else
             {
@@ -194,7 +205,7 @@ namespace SimpleWebStore.UI.Areas.Admin.Controllers
 
             if (statusToTheBase != null)
             {
-                selectedOrderHeaders = orderHeadersFromDb.Where(s => s.PaymentStatus == statusToTheBase).ToList();
+                selectedOrderHeaders = orderHeadersFromDb.Where(s => s.OrderStatus == statusToTheBase).ToList();
             }
             else
             {
